@@ -1,53 +1,83 @@
 package dal;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import javax.persistence.RollbackException;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import bo.Note;
 
 public class NoteDAO {
-	private static List<Note> notes;
-	
+	//private static List<Note> notes;
+	private static Session session;
 	static {
-		notes = new ArrayList<Note>();
-		notes.add(new Note("Une super note", LocalDateTime.of(2021, 12, 15, 10, 0)));
-		notes.add(new Note("Une incroyable note", LocalDateTime.of(2021, 12, 25, 22, 30)));
-		notes.add(new Note("Une fantastique note", LocalDateTime.of(2022, 1, 5, 8, 15)));
-		notes.add(new Note("Une bete note", LocalDateTime.of(2020, 1, 5, 8, 15)));
-		notes.add(new Note("Rendez-vous medecin",LocalDateTime.now()));
+		StandardServiceRegistry ssr = new StandardServiceRegistryBuilder()
+				.configure("hibernate.cfg.xml")
+				.build();
+Metadata meta = new MetadataSources(ssr).getMetadataBuilder().build();
+SessionFactory factory = meta.getSessionFactoryBuilder().build();
+session = factory.openSession();
+	}
+
+	public static void insertNote(Note note) {
+		Transaction t = session.beginTransaction();
+		try {
+			session.save(note);
+			session.flush();
+			t.commit();
+		} catch (RollbackException rbe) {
+			t.rollback();
+			System.err.println(rbe.getMessage());
+		}
+	}
+
+	public static List<Note> selectAll() {
+		return session.createQuery("from " + Note.class.getSimpleName(), Note.class).list();
+	}
+
+	public static Note selectById(int id) {
+		return session.find(Note.class, id);
+	}
+
+	public static Note deleteById(int id) {
+		Transaction t = session.beginTransaction();
+		try {
+			Note note = selectById(id);
+			session.delete(note); // inserer
+
+			session.flush(); //
+			t.commit();
+			return note;
+
+		} catch (RollbackException rbe) {
+			t.rollback();
+			System.out.println(rbe.getMessage());
+			return null;
+		}
 
 	}
-	
-	public static void insertNote(Note note) {
-		notes.add(note);
-	}
-	
-	public static List<Note> selectAll() {
-		Collections.sort(notes);
-		return notes;
-	}
-	
-	public static Note selectById(int id) {
-		for (int i = 0; i < notes.size(); i++) {
-			if ( notes.get(i).getId()==id ) {
-				Note note=notes.get(i);
-				return note;
-			}
+
+	public static boolean update(Note note) {
+
+		Transaction t = session.beginTransaction();
+		try {
+			session.update(note); // inserer
+			session.flush(); //
+			t.commit();
+
+		} catch (RollbackException rbe) {
+			t.rollback();
+			System.out.println(rbe.getMessage());
+			return false;
 		}
-		return null;
-	}
-	
-	public static Note deleteById(int id) {
-		
-		for (int i = 0; i < notes.size(); i++) {
-			if ( notes.get(i).getId()==id ) {
-				Note note=notes.get(i);
-				notes.remove(i);
-				return note;
-			}
-		}
-		return null;
+		return true;
+
 	}
 }

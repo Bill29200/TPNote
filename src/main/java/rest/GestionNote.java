@@ -35,16 +35,17 @@ public class GestionNote {
 	@POST
 	public int insertNote(@FormParam("contenu_note") String contenuNote) {
 		Note note=new Note(contenuNote,LocalDateTime.now());
+		System.out.println(note);
 		NoteManager.insertNote(note);
 		return 0;
 	}
 	
 	@PUT @Path("/{cle : \\d+}")
-	public int modifyNote(	@PathParam("cle") int id,
+	public boolean modifyNote(	@PathParam("cle") int id,
 							@FormParam("contenu_note_modifie") String contenuNote) {
 		Note note=NoteManager.getNoteById(id);
 		note.setNote(contenuNote);
-		return 0;
+		return NoteManager.updateNote(note);
 	}
 	
 	@DELETE

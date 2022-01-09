@@ -4,14 +4,27 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
-public class Note implements Comparable<Note> {
-	private static int count=1;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity @Table(name="notes")
+public class Note{
+	@Id @Column(name="id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column(name="note")
 	private String note;
+	
+	@Column(name="date_de_creation")
 	private LocalDateTime dateDeCreation;
 	
+	public Note() {}	
 	public Note(String note, LocalDateTime dateDeCreation) {
-		this.id = count++;
 		this.note = note;
 		this.dateDeCreation = dateDeCreation;
 	}
@@ -37,12 +50,6 @@ public class Note implements Comparable<Note> {
 		return "Note [id=" + id + ", note=" + note + ", dateDeCreation=" + dateDeCreation.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)) + "]";
 	}
 
-	@Override
-	public int compareTo(Note o) {
-		Note autreNote = o;
-		return -this.dateDeCreation.compareTo(autreNote.dateDeCreation);
-	}
-	
 	
 	
 }

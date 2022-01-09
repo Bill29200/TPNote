@@ -22,4 +22,9 @@ public class NoteManager {
 	public static Note deleteNote(int id) {
 		return NoteDAO.deleteById(id);
 	}
+	
+	public static boolean updateNote(Note note) {
+		return NoteDAO.update(note);
+	}
+	
 }
