@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="appelsWS.js"></script>
+<meta charset="ISO-8859-1">
+<title>Demo test webservices</title>
+</head>
+<body>
+	<h1>Prise de notes</h1>
+	
+	<!-- Le bouton chargé d'afficher toutes les couleurs -->
+	<input type="button" value="Charger le contenu" onclick="charger()" /><br/>
+	
+	<!-- Les champs permettant d'ajouter une couleur -->
+	<!-- <input type="text" id="nom_note" placeholder="Note" /> -->
+	<textarea id="nom_note" rows="3" cols="20" placeholder="Note"></textarea>
+	<input type="button" value="Ajouter creme" onclick="envoyer()" />
+
+	<!-- Une div vide destinee a accueillir les informations recuperees depuis le serveur -->
+	<div id="note_holder"></div>
+</body>
+</html>
